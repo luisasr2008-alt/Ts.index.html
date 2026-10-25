@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para ti</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f7f5f0;
+            font-family: 'Georgia', serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+        }
+
+        /* Botón inicial / Girasol central */
+        #click-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            text-align: center;
+            z-index: 10;
+            transition: opacity 1s ease;
+        }
+
+        .sunflower-center {
+            width: 50px;
+            height: 50px;
+            background: #8B4513;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            margin: 0 auto 10px auto;
+        }
+
+        /* Pétalos simulados alrededor */
+        .sunflower-center::before {
+            content: '';
+            position: absolute;
+            top: -15px; left: -15px; right: -15px; bottom: -15px;
+            background: radial-gradient(circle, #FFD700 60%, transparent 61%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .click-text {
+            font-size: 14px;
+            color: #333;
+            letter-spacing: 1px;
+        }
+
+        /* Suelo / Línea base */
+        .ground-line {
+            position: absolute;
+            bottom: 100px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #333;
+            display: none;
+        }
+
+        #grass {
+            position: absolute;
+            bottom: 102px;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.8s ease;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        #grass::before,
+        #grass::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            clip-path: polygon(
+                0 100%, 0 55%, 2% 100%, 4% 25%, 6% 100%, 8% 45%,
+                10% 100%, 12% 15%, 14% 100%, 17% 35%, 19% 100%,
+                22% 20%, 24% 100%, 27% 48%, 29% 100%, 32% 12%,
+                34% 100%, 37% 38%, 39% 100%, 42% 18%, 44% 100%,
+                47% 42%, 49% 100%, 52% 10%, 54% 100%, 57% 35%,
+                59% 100%, 62% 20%, 64% 100%, 67% 45%, 69% 100%,
+                72% 12%, 74% 100%, 77% 38%, 79% 100%, 82% 18%,
+                84% 100%, 87% 48%, 89% 100%, 92% 15%, 94% 100%,
+                97% 35%, 99% 100%, 100% 50%, 100% 100%
+            );
+        }
+
+        #grass::before {
+            background:
+                repeating-linear-gradient(72deg, transparent 0 4px, #2e8b57 5px 7px, transparent 8px 12px),
+                repeating-linear-gradient(108deg, transparent 0 5px, #3da35d 6px 8px, transparent 9px 14px);
+        }
+
+        #grass::after {
+            background:
+                radial-gradient(circle, #ffd166 0 1px, transparent 1.8px),
+                radial-gradient(circle, #e63946 0 2px, transparent 2.7px),
+                radial-gradient(circle, #e63946 0 2px, transparent 2.7px),
+                radial-gradient(circle, #e63946 0 2px, transparent 2.7px),
+                radial-gradient(circle, #e63946 0 2px, transparent 2.7px),
+                radial-gradient(circle, #e63946 0 2px, transparent 2.7px);
+            background-size: 30px 28px;
+            background-repeat: repeat;
+        }
+
+        /* Tallo */
+        #stem {
+            position: absolute;
+            bottom: 102px;
+            left: 50%;
+            width: 8.4px;
+            height: 0px;
+            background-color: #2e8b57;
+            transform: translateX(-50%);
+            transition: height 2s ease-in-out;
+        }
+
+        /* Copa de girasoles (Corazón) */
+        #heart-tree {
+            position: absolute;
+            bottom: 235px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            width: 350px;
+            height: 320px;
+            transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .mini-sunflower {
+            position: absolute;
+            width: 31.5px;
+            height: 31.5px;
+            background: radial-gradient(circle, #5c2c16 40%, #ffcc00 41%);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: scale(0.3);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        /* Textos animados */
+        .text-box {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            max-width: 400px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .text-box h2 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .text-box p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #444;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.8s ease;
+        }
+
+        .footer-quote {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-style: italic;
+            font-size: 13px;
+            color: #444;
+            opacity: 0;
+            transition: opacity 1s ease;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Botón inicial -->
+        <div id="click-btn" onclick="startAnimation()">
+            <div class="sunflower-center"></div>
+            <div class="click-text">Click Aquí</div>
+        </div>
+
+        <!-- Elementos del árbol -->
+        <div class="ground-line" id="ground"></div>
+        <div id="grass" aria-hidden="true"></div>
+        <div id="stem"></div>
+        <div id="heart-tree"></div>
+
+        <!-- Textos dinámicos -->
+        <div class="text-box" id="textBox">
+            <h2 id="t1" style="opacity:0; transition: opacity 1s;">🌻 Eres mi vida negra.
+                 Te extraño mucho fea 🌻</h2>
+            <p id="p4" style="font-weight: bold; color: #b22222;">- ¡TE AMO MI VIDA!</p>
+        </div>
+
+        <div class="footer-quote" id="footerQuote">
+            Eres mi pensamiento de cada dia.
+        </div>
+    </div>
+
+    <!-- Audio de fondo (puedes cambiar la URL del enlace de música si lo deseas) -->
+    <audio id="bg-audio" src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" preload="auto"></audio>
+
+    <script>
+        function startAnimation() {
+            // Reproducir música
+            const audio = document.getElementById('bg-audio');
+            audio.play().catch(e => console.log("Audio play blocked:", e));
+
+            // Ocultar botón inicial
+            const btn = document.getElementById('click-btn');
+            btn.style.opacity = '0';
+            setTimeout(() => btn.style.display = 'none', 1000);
+
+            // Mostrar línea y hacer crecer el tallo
+            document.getElementById('ground').style.display = 'block';
+            document.getElementById('grass').style.transform = 'scaleY(1)';
+            setTimeout(() => {
+                document.getElementById('stem').style.height = '150px';
+            }, 500);
+
+            // Mostrar la copa en forma de corazón con girasoles generados por coordenadas
+            setTimeout(() => {
+                const heartTree = document.getElementById('heart-tree');
+                heartTree.style.transform = 'translateX(-50%) scale(1)';
+                generateHeartFlowers();
+            }, 2000);
+
+            // Mostrar textos secuencialmente
+            setTimeout(() => {
+                document.getElementById('textBox').style.opacity = '1';
+                document.getElementById('t1').style.opacity = '1';
+            }, 3500);
+
+            setTimeout(() => showParagraph('p2'), 4500);
+            setTimeout(() => showParagraph('p3'), 6500);
+            setTimeout(() => showParagraph('p4'), 8500);
+            setTimeout(() => {
+                document.getElementById('footerQuote').style.opacity = '1';
+            }, 12000);
+        }
+
+        function showParagraph(id) {
+            const paragraph = document.getElementById(id);
+            if (!paragraph) return;
+
+            paragraph.style.opacity = '1';
+            paragraph.style.transform = 'translateY(0)';
+        }
+
+        // Función matemática para posicionar los girasoles en forma de corazón
+        function generateHeartFlowers() {
+            const container = document.getElementById('heart-tree');
+            const flowerSize = 31.5;
+            const count = 260;
+
+            container.replaceChildren();
+
+            function addFlower(x, y, index) {
+                const flower = document.createElement('div');
+                flower.className = 'mini-sunflower';
+                flower.style.left = `${175 + x * 112 - flowerSize / 2}px`;
+                flower.style.bottom = `${y * 105 + 130 - flowerSize / 2}px`;
+                container.appendChild(flower);
+
+                setTimeout(() => {
+                    flower.style.opacity = '1';
+                    flower.style.transform = 'scale(1)';
+                }, index * 12);
+            }
+
+            // Flor en la punta para unir visualmente el corazón con el tallo.
+            addFlower(0, -1, 0);
+
+            let placed = 1;
+            let attempts = 0;
+
+            while (placed < count && attempts < count * 30) {
+                attempts++;
+
+                const x = Math.random() * 2.36 - 1.18;
+                const y = Math.random() * 2.3 - 1.15;
+                const insideHeart = Math.pow(x * x + y * y - 1, 3) - x * x * Math.pow(y, 3);
+
+                if (insideHeart <= 0) {
+                    addFlower(x, y, placed);
+                    placed++;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
